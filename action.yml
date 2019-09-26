@@ -33,5 +33,5 @@ runs:
     - ${{ inputs.pattern }}
     - ${{ inputs.exclude }}
 branding:
-  icon: 'alert-octagon'
-  color: 'blue'
+  icon: 'zoom-in'
+  color: 'purple'
