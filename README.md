@@ -38,7 +38,6 @@ Optional. File patterns of target files. Same as `-name [pattern]` of `find` com
 ### `exclude`
 
 Optional. Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command.
-Default: ``
 e.g. `./git/*`
 
 ### `shellcheck_flags`
