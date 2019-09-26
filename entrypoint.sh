@@ -4,7 +4,7 @@ cd "${GITHUB_WORKSPACE}" || exit
 
 export REVIEWDOG_GITHUB_API_TOKEN="${INPUT_GITHUB_TOKEN}"
 
-if [ "${INPUT_REPORTER}" == 'github-pr-review' ]; then
+if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
   # erroformat: https://git.io/JeGMU
   shellcheck -f json  ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} $(find "${INPUT_PATH:-'.'}" -not -path "${INPUT_EXCLUDE}" -type f -name "${INPUT_PATTERN:-'*.sh'}") \
     | jq -r '.[] | "\(.file):\(.line):\(.column):\(.level):\(.message) [SC\(.code)](https://github.com/koalaman/shellcheck/wiki/SC\(.code))"' \
