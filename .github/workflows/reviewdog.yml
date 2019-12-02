@@ -7,11 +7,19 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: shellcheck-github-pr-check
-        uses: reviewdog/action-shellcheck@v1
+        uses: ./
         with:
           github_token: ${{ secrets.github_token }}
+      - name: shellcheck-github-check
+        uses: ./
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-check
+          pattern: '*.sh'
+          path: '.'
+          exclude: './testdata/*'
       - name: shellcheck-github-pr-review
-        uses: reviewdog/action-shellcheck@v1
+        uses: ./
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
