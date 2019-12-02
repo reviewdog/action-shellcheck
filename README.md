@@ -23,7 +23,7 @@ It's same as `-level` flag of reviewdog.
 
 ### `reporter`
 
-Reporter of reviewdog command [github-pr-check,github-pr-review].
+Reporter of reviewdog command [github-pr-check,github-pr-review,github-check].
 Default is github-pr-check.
 github-pr-review can use Markdown and add a link to rule page in reviewdog reports.
 
