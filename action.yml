@@ -17,11 +17,8 @@ inputs:
   path:
     description: "Base directory to run shellcheck. Same as `[path]` of `find` command."
     default: '.'
-  pattern:
-    description: "File patterns of target files. Same as `-name [pattern]` of `find` command."
-    default: '*.sh'
   exclude:
-    description: "Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command."
+    description: "Exclude patterns of target files. Same as `--exclude-dir` of `grep` command."
 runs:
   using: 'docker'
   image: 'Dockerfile'

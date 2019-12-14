@@ -33,7 +33,7 @@ Optional. Base directory to run shellcheck. Default: `.`
 
 ### `exclude`
 
-Optional. Exclude patterns of target files. Same as `-exclude-dir` of `grep` command.
+Optional. Exclude patterns of target files. Same as `--exclude-dir` of `grep` command.
 
 Default:  `.git`
 
