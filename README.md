@@ -29,16 +29,13 @@ github-pr-review can use Markdown and add a link to rule page in reviewdog repor
 
 ### `path`
 
-Optional. Base directory to run shellcheck. Same as `[path]` of `find` command. Default: `.`
-
-### `pattern`
-
-Optional. File patterns of target files. Same as `-name [pattern]` of `find` command. Default: `*.sh`
+Optional. Base directory to run shellcheck. Default: `.`
 
 ### `exclude`
 
-Optional. Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command.
-e.g. `./git/*`
+Optional. Exclude patterns of target files. Same as `-exclude-dir` of `grep` command.
+
+Default:  `.git`
 
 ### `shellcheck_flags`
 
@@ -63,6 +60,5 @@ jobs:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review # Change reporter.
           path: "." # Optional.
-          pattern: "*.sh" # Optional.
-          exclude: "./.git/*" # Optional.
+          exclude: ".git" # Optional.
 ```
