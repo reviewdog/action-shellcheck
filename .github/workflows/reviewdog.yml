@@ -16,14 +16,12 @@ jobs:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
           level: warning
-          pattern: '*.sh'
           path: '.'
-          exclude: './testdata/*'
+          exclude: 'testdata'
       - name: shellcheck-github-pr-review
         uses: ./
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
-          pattern: '*.sh'
           path: '.'
-          exclude: './testdata/*'
+          exclude: 'testdata'
