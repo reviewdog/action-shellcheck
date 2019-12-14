@@ -3,8 +3,10 @@ FROM koalaman/shellcheck-alpine:latest
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 RUN wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin/ v0.9.14
-RUN apk --no-cache add jq git
+RUN apk --no-cache add jq git grep
 
 COPY entrypoint.sh /entrypoint.sh
+
+WORKDIR /reviewdog
 
 ENTRYPOINT ["/entrypoint.sh"]
