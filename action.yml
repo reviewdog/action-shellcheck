@@ -4,7 +4,7 @@ author: 'haya14busa (reviewdog)'
 inputs:
   github_token:
     description: 'GITHUB_TOKEN.'
-    required: true
+    default: '${{ github.token }}'
   level:
     description: 'Report level for reviewdog [info,warning,error]'
     default: 'error'
