@@ -19,6 +19,7 @@ jobs:
           pattern: '*.sh'
           path: '.'
           exclude: './testdata/*'
+          shellcheck_flags: '--external-sources --severity=style'
       - name: shellcheck-github-pr-review
         uses: ./
         with:
