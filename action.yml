@@ -35,6 +35,9 @@ inputs:
     default: '*.sh'
   exclude:
     description: "Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command."
+  shellcheck_flags:
+    description: "Flags of shellcheck command."
+    default: '--external-sources'
 runs:
   using: 'docker'
   image: 'Dockerfile'
