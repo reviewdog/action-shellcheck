@@ -16,6 +16,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
           level: warning
+          filter_mode: nofilter
           pattern: '*.sh'
           path: '.'
           exclude: './testdata/*'
