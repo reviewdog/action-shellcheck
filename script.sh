@@ -18,6 +18,7 @@ FILES=$(find "${INPUT_PATH:-'.'}" -not -path "${INPUT_EXCLUDE}" -type f -name "$
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
   # erroformat: https://git.io/JeGMU
+  # shellcheck disable=SC2086
   shellcheck -f json  ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} ${FILES} \
     | jq -r '.[] | "\(.file):\(.line):\(.column):\(.level):\(.message) [SC\(.code)](https://github.com/koalaman/shellcheck/wiki/SC\(.code))"' \
     | reviewdog \
@@ -30,6 +31,7 @@ if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
         ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE=$?
 else
   # github-pr-check,github-check (GitHub Check API) doesn't support markdown annotation.
+  # shellcheck disable=SC2086
   shellcheck -f checkstyle ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} ${FILES} \
     | reviewdog \
         -f="checkstyle" \
@@ -44,6 +46,7 @@ echo '::endgroup::'
 
 echo '::group:: Running shellcheck (suggestion) ...'
 # -reporter must be github-pr-review for the suggestion feature.
+# shellcheck disable=SC2086
 shellcheck -f diff ${FILES} \
   | reviewdog \
       -name="shellcheck (suggestion)" \
