@@ -13,9 +13,12 @@ cd "${GITHUB_WORKSPACE}" || exit
 
 export REVIEWDOG_GITHUB_API_TOKEN="${INPUT_GITHUB_TOKEN}"
 
+FILES=$(find "${INPUT_PATH:-'.'}" -not -path "${INPUT_EXCLUDE}" -type f -name "${INPUT_PATTERN:-'*.sh'}")
+
+echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
   # erroformat: https://git.io/JeGMU
-  shellcheck -f json  ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} $(find "${INPUT_PATH:-'.'}" -not -path "${INPUT_EXCLUDE}" -type f -name "${INPUT_PATTERN:-'*.sh'}") \
+  shellcheck -f json  ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} ${FILES} \
     | jq -r '.[] | "\(.file):\(.line):\(.column):\(.level):\(.message) [SC\(.code)](https://github.com/koalaman/shellcheck/wiki/SC\(.code))"' \
     | reviewdog \
         -efm="%f:%l:%c:%t%*[^:]:%m" \
@@ -24,10 +27,10 @@ if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
         -filter-mode="${INPUT_FILTER_MODE}" \
         -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
         -level="${INPUT_LEVEL}" \
-        ${INPUT_REVIEWDOG_FLAGS}
+        ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE=$?
 else
   # github-pr-check,github-check (GitHub Check API) doesn't support markdown annotation.
-  shellcheck -f checkstyle ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} $(find "${INPUT_PATH:-'.'}" -not -path "${INPUT_EXCLUDE}" -type f -name "${INPUT_PATTERN:-'*.sh'}") \
+  shellcheck -f checkstyle ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} ${FILES} \
     | reviewdog \
         -f="checkstyle" \
         -name="shellcheck" \
@@ -35,5 +38,23 @@ else
         -filter-mode="${INPUT_FILTER_MODE}" \
         -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
         -level="${INPUT_LEVEL}" \
-        ${INPUT_REVIEWDOG_FLAGS}
+        ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE=$?
+fi
+echo '::endgroup::'
+
+echo '::group:: Running shellcheck (suggestion) ...'
+# -reporter must be github-pr-review for the suggestion feature.
+shellcheck -f diff ${FILES} \
+  | reviewdog \
+      -name="shellcheck (suggestion)" \
+      -f=diff \
+      -f.diff.strip=1 \
+      -reporter="github-pr-review" \
+      -filter-mode="${INPUT_FILTER_MODE}" \
+      -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
+      ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE_SUGGESTION=$?
+echo '::endgroup::'
+
+if [ "${EXIT_CODE}" != 0 ] || [ "${EXIT_CODE_SUGGESTION}" != 0 ]; then
+  exit 1
 fi
