@@ -5,42 +5,71 @@ inputs:
   github_token:
     description: 'GITHUB_TOKEN.'
     default: '${{ github.token }}'
+    required: false
   level:
     description: 'Report level for reviewdog [info,warning,error]'
     default: 'error'
+    required: false
   reporter:
     description: |
       Reporter of reviewdog command [github-pr-check,github-pr-review,github-check].
       Default is github-pr-check.
       github-pr-review can use Markdown and add a link to rule page in reviewdog reports.
     default: 'github-pr-check'
+    required: false
   filter_mode:
     description: |
       Filtering mode for the reviewdog command [added,diff_context,file,nofilter].
       Default is added.
     default: 'added'
+    required: false
   fail_on_error:
     description: |
       Exit code for reviewdog when errors are found [true,false]
       Default is `false`.
     default: 'false'
+    required: false
   reviewdog_flags:
     description: 'Additional reviewdog flags'
     default: ''
+    required: false
   path:
     description: "Base directory to run shellcheck. Same as `[path]` of `find` command."
     default: '.'
+    required: false
   pattern:
     description: "File patterns of target files. Same as `-name [pattern]` of `find` command."
     default: '*.sh'
+    required: false
   exclude:
     description: "Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command."
   shellcheck_flags:
     description: "Flags of shellcheck command."
     default: '--external-sources'
+    required: false
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "composite"
+  steps:
+    - uses: reviewdog/action-setup@v1
+      with:
+        reviewdog_version: v0.13.0
+    - run: $GITHUB_ACTION_PATH/script.sh
+      shell: bash
+      env:
+        SHELLCHECK_VERSION: 0.7.2
+        # INPUT_<VARIABLE_NAME> is not available in Composite run steps
+        # https://github.community/t/input-variable-name-is-not-available-in-composite-run-steps/127611
+        INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
+        INPUT_LEVEL: ${{ inputs.level }}
+        INPUT_REPORTER: ${{ inputs.reporter }}
+        INPUT_FILTER_MODE: ${{ inputs.filter_mode }}
+        INPUT_FAIL_ON_ERROR: ${{ inputs.fail_on_error }}
+        INPUT_REVIEWDOG_FLAGS: ${{ inputs.reviewdog_flags }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_PATTERN: ${{ inputs.pattern }}
+        INPUT_EXCLUDE: ${{ inputs.exclude }}
+        INPUT_SHELLCHECK_FLAGS: ${{ inputs.shellcheck_flags }}
+
 branding:
   icon: 'zoom-in'
   color: 'purple'

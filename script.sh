@@ -1,5 +1,14 @@
 #!/bin/sh
 
+echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck'
+TEMP_PATH="$(mktemp -d)"
+cd "${TEMP_PATH}"
+wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
+mkdir bin
+cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+PATH="${TEMP_PATH}/bin:$PATH"
+echo '::endgroup::'
+
 cd "${GITHUB_WORKSPACE}" || exit
 
 export REVIEWDOG_GITHUB_API_TOKEN="${INPUT_GITHUB_TOKEN}"
