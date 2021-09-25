@@ -55,6 +55,6 @@ shellcheck -f diff ${FILES} \
       ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE_SUGGESTION=$?
 echo '::endgroup::'
 
-if [ "${EXIT_CODE}" != 0 ] || [ "${EXIT_CODE_SUGGESTION}" != 0 ]; then
+if [ -n "${EXIT_CODE}" ] || [ -n "${EXIT_CODE_SUGGESTION}" ]; then
   exit 1
 fi
