@@ -26,13 +26,13 @@ if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
   files_with_shebang=$(find "${path}" -not -path "${path}/.git/*" -not -path "${exclude}" -not -name "${pattern}" -type f -print0 | xargs -0 grep -m2 -IrlZ "^#\\!/.*sh" | xargs -r -0 echo)
 fi
 
-FILES="${files_with_pattern} ${files_with_shebang}"
-
 # Exit early if no files have been found
-if [ -z "${FILES}" ]; then
+if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang}" ]; then
   echo "No matching files found to check."
   exit 0
 fi
+
+FILES="${files_with_pattern} ${files_with_shebang}"
 
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
