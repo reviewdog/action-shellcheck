@@ -13,7 +13,20 @@ cd "${GITHUB_WORKSPACE}" || exit
 
 export REVIEWDOG_GITHUB_API_TOKEN="${INPUT_GITHUB_TOKEN}"
 
-FILES=$(find "${INPUT_PATH:-'.'}" -not -path "${INPUT_EXCLUDE}" -type f -name "${INPUT_PATTERN:-'*.sh'}")
+pattern="${INPUT_PATTERN:-'*.sh'}"
+exclude="${INPUT_EXCLUDE:-}"
+path="${INPUT_PATH:-'.'}"
+
+# Match all files matching the pattern
+files_with_pattern=$(find "${path}" -not -path "${exclude}" -type f -name "${pattern}")
+
+# Match all files with a shebang (e.g. "#!/usr/bin/env zsh" or even "#!/my/path/bash") in the first two lines
+# Ignore files which match "$pattern" in order to avoid duplicates
+if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
+  files_with_shebang=$(find "${path}" -not -path "${path}/.git/*" -not -path "${exclude}" -not -name "${pattern}" -type f -print0 | xargs -0 grep -m2 -IrlZ "^#\\!/.*sh" | xargs -r -0 echo)
+fi
+
+FILES="${files_with_pattern} ${files_with_shebang}"
 
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then

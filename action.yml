@@ -41,6 +41,12 @@ inputs:
     description: "File patterns of target files. Same as `-name [pattern]` of `find` command."
     default: '*.sh'
     required: false
+  check_all_files_with_shebangs:
+    description: |
+      Checks all files with shebangs in the repository even if they do not match the pattern.
+      Default is `false`.
+    default: 'false'
+    required: false
   exclude:
     description: "Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command."
   shellcheck_flags:
@@ -68,6 +74,7 @@ runs:
         INPUT_PATH: ${{ inputs.path }}
         INPUT_PATTERN: ${{ inputs.pattern }}
         INPUT_EXCLUDE: ${{ inputs.exclude }}
+        INPUT_CHECK_ALL_FILES_WITH_SHEBANGS: ${{ inputs.check_all_files_with_shebangs }}
         INPUT_SHELLCHECK_FLAGS: ${{ inputs.shellcheck_flags }}
 
 branding:
