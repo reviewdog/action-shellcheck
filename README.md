@@ -33,7 +33,7 @@ github-pr-review can use Markdown and add a link to rule page in reviewdog repor
 ### `filter_mode`
 
 Optional. Filtering mode for the reviewdog command [added,diff_context,file,nofilter].
-Default is added.
+Default is `file`.
 
 ### `fail_on_error`
 
