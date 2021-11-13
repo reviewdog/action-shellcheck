@@ -47,7 +47,8 @@ if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
         -filter-mode="${INPUT_FILTER_MODE}" \
         -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
         -level="${INPUT_LEVEL}" \
-        ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE=$?
+        ${INPUT_REVIEWDOG_FLAGS}
+  EXIT_CODE=$?
 else
   # github-pr-check,github-check (GitHub Check API) doesn't support markdown annotation.
   # shellcheck disable=SC2086
@@ -59,7 +60,8 @@ else
         -filter-mode="${INPUT_FILTER_MODE}" \
         -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
         -level="${INPUT_LEVEL}" \
-        ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE=$?
+        ${INPUT_REVIEWDOG_FLAGS}
+  EXIT_CODE=$?
 fi
 echo '::endgroup::'
 
@@ -74,9 +76,10 @@ shellcheck -f diff ${FILES} \
       -reporter="github-pr-review" \
       -filter-mode="${INPUT_FILTER_MODE}" \
       -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
-      ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE_SUGGESTION=$?
+      ${INPUT_REVIEWDOG_FLAGS}
+EXIT_CODE_SUGGESTION=$?
 echo '::endgroup::'
 
-if [ -n "${EXIT_CODE}" ] || [ -n "${EXIT_CODE_SUGGESTION}" ]; then
-  exit 1
+if [ "${EXIT_CODE}" -ne 0 ] || [ "${EXIT_CODE_SUGGESTION}" -ne 0 ]; then
+  exit $((EXIT_CODE + EXIT_CODE_SUGGESTION))
 fi
