@@ -48,14 +48,37 @@ Optional. Additional reviewdog flags
 
 Optional. Base directory to run shellcheck. Same as `[path]` of `find` command. Default: `.`
 
+Directories are separated by lines. e.g.:
+
+```yml
+path: |
+  tools
+  src
+```
+
 ### `pattern`
 
 Optional. File patterns of target files. Same as `-name [pattern]` of `find` command. Default: `*.sh`
 
+Patterns are separated by lines. e.g.:
+
+```yml
+pattern: |
+  *.bash
+  *.sh
+```
+
 ### `exclude`
 
-Optional. Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command.
-e.g. `./git/*`
+Optional. Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command. Default: `*/.git/*`
+
+Patterns are separated by lines. e.g.:
+
+```yml
+exclude: |
+  */.git/*
+  ./.cache/*
+```
 
 ### `check_all_files_with_shebangs`
 
