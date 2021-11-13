@@ -57,6 +57,11 @@ Optional. File patterns of target files. Same as `-name [pattern]` of `find` com
 Optional. Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command.
 e.g. `./git/*`
 
+### `check_all_files_with_shebangs`
+
+Optional. Checks all files with shebangs in the repository even if they do not match `pattern`.
+Default is `false`.
+
 ### `shellcheck_flags`
 
 Optional. Flags of shellcheck command. Default: `--external-sources`
@@ -82,4 +87,5 @@ jobs:
           path: "." # Optional.
           pattern: "*.sh" # Optional.
           exclude: "./.git/*" # Optional.
+          check_all_files_with_shebangs: "false" # Optional.
 ```
