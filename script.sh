@@ -28,6 +28,12 @@ fi
 
 FILES="${files_with_pattern} ${files_with_shebang}"
 
+# Exit early if no files have been found
+if [ -z "${FILES}" ]; then
+  echo "No matching files found to check."
+  exit 0
+fi
+
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
   # erroformat: https://git.io/JeGMU
