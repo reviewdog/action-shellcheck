@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -u
+
 echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck'
 TEMP_PATH="$(mktemp -d)"
 cd "${TEMP_PATH}" || exit
@@ -27,12 +29,12 @@ if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
 fi
 
 # Exit early if no files have been found
-if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang}" ]; then
+if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang:-}" ]; then
   echo "No matching files found to check."
   exit 0
 fi
 
-FILES="${files_with_pattern} ${files_with_shebang}"
+FILES="${files_with_pattern} ${files_with_shebang:-}"
 
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
