@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -u
+
 echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck'
 TEMP_PATH="$(mktemp -d)"
 cd "${TEMP_PATH}" || exit
@@ -42,12 +44,12 @@ if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
 fi
 
 # Exit early if no files have been found
-if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang}" ]; then
+if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang:-}" ]; then
   echo "No matching files found to check."
   exit 0
 fi
 
-FILES="${files_with_pattern} ${files_with_shebang}"
+FILES="${files_with_pattern} ${files_with_shebang:-}"
 
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
@@ -62,7 +64,8 @@ if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
         -filter-mode="${INPUT_FILTER_MODE}" \
         -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
         -level="${INPUT_LEVEL}" \
-        ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE=$?
+        ${INPUT_REVIEWDOG_FLAGS}
+  EXIT_CODE=$?
 else
   # github-pr-check,github-check (GitHub Check API) doesn't support markdown annotation.
   # shellcheck disable=SC2086
@@ -74,7 +77,8 @@ else
         -filter-mode="${INPUT_FILTER_MODE}" \
         -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
         -level="${INPUT_LEVEL}" \
-        ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE=$?
+        ${INPUT_REVIEWDOG_FLAGS}
+  EXIT_CODE=$?
 fi
 echo '::endgroup::'
 
@@ -89,9 +93,10 @@ shellcheck -f diff ${FILES} \
       -reporter="github-pr-review" \
       -filter-mode="${INPUT_FILTER_MODE}" \
       -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
-      ${INPUT_REVIEWDOG_FLAGS} || EXIT_CODE_SUGGESTION=$?
+      ${INPUT_REVIEWDOG_FLAGS}
+EXIT_CODE_SUGGESTION=$?
 echo '::endgroup::'
 
-if [ -n "${EXIT_CODE}" ] || [ -n "${EXIT_CODE_SUGGESTION}" ]; then
-  exit 1
+if [ "${EXIT_CODE}" -ne 0 ] || [ "${EXIT_CODE_SUGGESTION}" -ne 0 ]; then
+  exit $((EXIT_CODE + EXIT_CODE_SUGGESTION))
 fi
