@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck'
 TEMP_PATH="$(mktemp -d)"
@@ -13,17 +13,32 @@ cd "${GITHUB_WORKSPACE}" || exit
 
 export REVIEWDOG_GITHUB_API_TOKEN="${INPUT_GITHUB_TOKEN}"
 
-pattern="${INPUT_PATTERN:-'*.sh'}"
-exclude="${INPUT_EXCLUDE:-}"
-path="${INPUT_PATH:-'.'}"
+paths=()
+while read -r pattern; do
+    [[ -n ${pattern} ]] && paths+=("${pattern}")
+done <<< "${INPUT_PATH:-.}"
+
+names=()
+if [[ "${INPUT_PATTERN:-*}" != '*' ]]; then
+    while read -r pattern; do
+        [[ -n ${pattern} ]] && names+=(-o -name "${pattern}")
+    done <<< "${INPUT_PATTERN}"
+    (( ${#names[@]} )) && { names[0]='('; names+=(')'); }
+fi
+
+excludes=()
+while read -r pattern; do
+    [[ -n ${pattern} ]] && excludes+=(-not -path "${pattern}")
+done <<< "${INPUT_EXCLUDE:-}"
+
 
 # Match all files matching the pattern
-files_with_pattern=$(find "${path}" -not -path "${exclude}" -type f -name "${pattern}")
+files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}")
 
 # Match all files with a shebang (e.g. "#!/usr/bin/env zsh" or even "#!/my/path/bash") in the first two lines
 # Ignore files which match "$pattern" in order to avoid duplicates
 if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
-  files_with_shebang=$(find "${path}" -not -path "${path}/.git/*" -not -path "${exclude}" -not -name "${pattern}" -type f -print0 | xargs -0 grep -m2 -IrlZ "^#\\!/.*sh" | xargs -r -0 echo)
+  files_with_shebang=$(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 | xargs -0 grep -m2 -IrlZ "^#\\!/.*sh" | xargs -r -0 echo)
 fi
 
 # Exit early if no files have been found

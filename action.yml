@@ -49,6 +49,8 @@ inputs:
     required: false
   exclude:
     description: "Exclude patterns of target files. Same as `-not -path [exclude]` of `find` command."
+    default: '*/.git/*'
+    required: false
   shellcheck_flags:
     description: "Flags of shellcheck command."
     default: '--external-sources'
