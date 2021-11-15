@@ -37,10 +37,10 @@ done <<< "${INPUT_EXCLUDE:-}"
 # Match all files matching the pattern
 files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}")
 
-# Match all files with a shebang (e.g. "#!/usr/bin/env zsh" or even "#!/my/path/bash") in the first two lines
+# Match all files with a shebang (e.g. "#!/usr/bin/env zsh" or even "#!/my/path/bash") in the first line of a file
 # Ignore files which match "$pattern" in order to avoid duplicates
 if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
-  files_with_shebang=$(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 | xargs -0 grep -m2 -IrlZ "^#\\!/.*sh" | xargs -r -0 echo)
+  files_with_shebang=$(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 | xargs -0 awk 'FNR==1 && /#!\/.*sh/ { print FILENAME }')
 fi
 
 # Exit early if no files have been found
