@@ -29,3 +29,17 @@ jobs:
           pattern: '*.sh'
           path: '.'
           exclude: './testdata/*'
+      - name: shellcheck-shebang-check
+        uses: ./
+        with:
+          github_token: ${{ secrets.github_token }}
+          filter_mode: nofilter
+          pattern: |
+            *.sh
+          path: |
+            .
+            ./testdata
+          exclude: |
+            ./testdata/test.sh
+            */.git/*
+          check_all_files_with_shebangs: true
