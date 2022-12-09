@@ -33,14 +33,15 @@ while read -r pattern; do
     [[ -n ${pattern} ]] && excludes+=(-not -path "${pattern}")
 done <<< "${INPUT_EXCLUDE:-}"
 
-
+set -x
 # Match all files matching the pattern
-files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}" | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' ')
+# | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' '
+files_with_pattern+=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}" | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' ')
 
 # Match all files with a shebang (e.g. "#!/usr/bin/env zsh" or even "#!bash") in the first line of a file
 # Ignore files which match "$pattern" in order to avoid duplicates
 if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
-  files_with_shebang=$(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 | xargs -0 awk 'FNR==1 && /^#!.*sh/ { print FILENAME }' | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' ')
+  files_with_shebang+=$(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 | xargs -0 awk 'FNR==1 && /^#!.*sh/ { print FILENAME }' | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' ')
 fi
 
 # Exit early if no files have been found
@@ -49,7 +50,7 @@ if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang:-}" ]; then
   exit 0
 fi
 
-FILES="${files_with_pattern} ${files_with_shebang:-}"
+FILES+="${files_with_pattern} ${files_with_shebang:-}"
 
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
@@ -85,7 +86,7 @@ echo '::endgroup::'
 echo '::group:: Running shellcheck (suggestion) ...'
 # -reporter must be github-pr-review for the suggestion feature.
 # shellcheck disable=SC2086
-shellcheck -f diff "${FILES}" \
+shellcheck -f diff ${FILES} \
   | reviewdog \
       -name="shellcheck (suggestion)" \
       -f=diff \
@@ -96,7 +97,7 @@ shellcheck -f diff "${FILES}" \
       ${INPUT_REVIEWDOG_FLAGS}
 EXIT_CODE_SUGGESTION=$?
 echo '::endgroup::'
-
+set +x
 if [ "${EXIT_CODE}" -ne 0 ] || [ "${EXIT_CODE_SUGGESTION}" -ne 0 ]; then
   exit $((EXIT_CODE + EXIT_CODE_SUGGESTION))
 fi
