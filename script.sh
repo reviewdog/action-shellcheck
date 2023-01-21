@@ -5,6 +5,7 @@ set -u
 echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck'
 TEMP_PATH="$(mktemp -d)"
 cd "${TEMP_PATH}" || exit
+mkdir bin
 
 WINDOWS_TARGET=zip
 LINUX_TARGET=linux.x86_64.tar.xz
@@ -12,14 +13,15 @@ MACOS_TARGET=darwin.x86_64.tar.xz
 
 if [[ $(uname -s) == "Linux" ]]; then
     curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${LINUX_TARGET}" | tar -xJf -
+    cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
 elif [[ $(uname -s) == "Darwin" ]]; then
     curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${MACOS_TARGET}" | tar -xJf -
+    cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
 else
     curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" -o "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && unzip "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && rm "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}"
+    cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck.exe" ./bin
 fi
 
-mkdir bin
-cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
 PATH="${TEMP_PATH}/bin:$PATH"
 echo '::endgroup::'
 
