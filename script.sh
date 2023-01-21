@@ -19,7 +19,7 @@ elif [[ $(uname -s) == "Darwin" ]]; then
     cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
 else
     curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" -o "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && unzip "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && rm "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}"
-    cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck.exe" ./bin
+    cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck.exe" ./bin/shellcheck
 fi
 
 PATH="${TEMP_PATH}/bin:$PATH"
