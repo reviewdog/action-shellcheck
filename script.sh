@@ -47,7 +47,6 @@ while read -r pattern; do
     [[ -n ${pattern} ]] && excludes+=(-not -path "${pattern}")
 done <<< "${INPUT_EXCLUDE:-}"
 
-
 # Match all files matching the pattern
 files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}")
 
