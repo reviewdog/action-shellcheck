@@ -1,5 +1,8 @@
 * text=auto
 
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text eol=lf
+
 # Denote files that are shell scripts and should be normalized (convert crlf -> lf)
 # and should be converted to unix line endings on checkout.
 *.sh text eol=lf
