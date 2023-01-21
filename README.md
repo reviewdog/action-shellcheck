@@ -116,7 +116,8 @@ jobs:
 ## Known issue
 
 > Running `shellcheck.exe` on Windows might fail with the following error:
-`SC1017: Literal carriage return. Run script through tr -d '\r'`
+>
+>`SC1017: Literal carriage return. Run script through tr -d '\r'`
 > 
 > This is due to the presence of a carriage return character (`\r`) in the script.
 > 
