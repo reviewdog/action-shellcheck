@@ -1,1 +1,17 @@
+# Add support for running the script on Windows, Linux and MacOs
 * text=auto
+
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text eol=lf
+
+# Denote files that are text and should be normalized (Convert crlf -> lf)
+# but should not be converted to native line endings on checkout.
+*.md text
+
+# Denote files that are text and should be normalized (Convert crlf -> lf)
+# and should be converted to native line endings on checkout.
+*.sh text eol=lf
+
+# Denote files that are text and should be normalized (Convert crlf -> lf)
+# and should be converted to native line endings on checkout.
+*.yml text eol=lf
