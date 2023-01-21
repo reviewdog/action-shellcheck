@@ -5,9 +5,23 @@ set -u
 echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck'
 TEMP_PATH="$(mktemp -d)"
 cd "${TEMP_PATH}" || exit
-curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
 mkdir bin
-cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+
+WINDOWS_TARGET=zip
+LINUX_TARGET=linux.x86_64.tar.xz
+MACOS_TARGET=darwin.x86_64.tar.xz
+
+if [[ $(uname -s) == "Linux" ]]; then
+  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${LINUX_TARGET}" | tar -xJf -
+  cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+elif [[ $(uname -s) == "Darwin" ]]; then
+  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${MACOS_TARGET}" | tar -xJf -
+  cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+else
+  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" -o "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && unzip "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && rm "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}"
+  cp "shellcheck.exe" ./bin
+fi
+
 PATH="${TEMP_PATH}/bin:$PATH"
 echo '::endgroup::'
 
@@ -32,7 +46,6 @@ excludes=()
 while read -r pattern; do
     [[ -n ${pattern} ]] && excludes+=(-not -path "${pattern}")
 done <<< "${INPUT_EXCLUDE:-}"
-
 
 # Match all files matching the pattern
 files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}")
