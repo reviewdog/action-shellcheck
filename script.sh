@@ -6,7 +6,6 @@ echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck
 TEMP_PATH="$(mktemp -d)"
 cd "${TEMP_PATH}" || exit
 
-# Download the latest version
 WINDOWS_TARGET=zip
 LINUX_TARGET=linux.x86_64.tar.xz
 MACOS_TARGET=darwin.x86_64.tar.xz
