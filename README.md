@@ -112,3 +112,16 @@ jobs:
           exclude: "./.git/*" # Optional.
           check_all_files_with_shebangs: "false" # Optional.
 ```
+
+## Known issue
+
+> Running `shellcheck.exe` on Windows might fail with the following error:
+`SC1017: Literal carriage return. Run script through tr -d '\r'`
+> 
+> This is due to the presence of a carriage return character (`\r`) in the script.
+> 
+> To fix this, you can add a `.gitattributes` file to your repository with the following contents:
+> ```
+> *.sh text eol=lf
+> ```
+> This will ensure that the scripts are checked out with the correct line endings.
