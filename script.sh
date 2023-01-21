@@ -8,6 +8,7 @@ cd "${TEMP_PATH}" || exit
 curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
 mkdir bin
 cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+chmod +x bin/shellcheck
 PATH="${TEMP_PATH}/bin:$PATH"
 echo '::endgroup::'
 
