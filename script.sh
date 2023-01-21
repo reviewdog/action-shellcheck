@@ -12,14 +12,14 @@ LINUX_TARGET=linux.x86_64.tar.xz
 MACOS_TARGET=darwin.x86_64.tar.xz
 
 if [[ $(uname -s) == "Linux" ]]; then
-    curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${LINUX_TARGET}" | tar -xJf -
-    cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${LINUX_TARGET}" | tar -xJf -
+  cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
 elif [[ $(uname -s) == "Darwin" ]]; then
-    curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${MACOS_TARGET}" | tar -xJf -
-    cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${MACOS_TARGET}" | tar -xJf -
+  cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
 else
-    curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" -o "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && unzip "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && rm "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}"
-    cp "shellcheck.exe" ./bin
+  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" -o "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && unzip "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && rm "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}"
+  cp "shellcheck.exe" ./bin
 fi
 
 PATH="${TEMP_PATH}/bin:$PATH"
