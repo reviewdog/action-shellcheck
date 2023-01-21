@@ -15,12 +15,11 @@ if [[ $(uname -s) == "Linux" ]]; then
 elif [[ $(uname -s) == "Darwin" ]]; then
     curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${MACOS_TARGET}" | tar -xJf -
 else
-    unzip <(curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}")
+    curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.zip" -o shellcheck-v${SHELLCHECK_VERSION}.zip && unzip shellcheck-v${SHELLCHECK_VERSION}.zip && rm shellcheck-v${SHELLCHECK_VERSION}.zip
 fi
 
 mkdir bin
 cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
-chmod +x bin/shellcheck
 PATH="${TEMP_PATH}/bin:$PATH"
 echo '::endgroup::'
 
