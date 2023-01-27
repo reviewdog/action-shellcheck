@@ -31,20 +31,20 @@ export REVIEWDOG_GITHUB_API_TOKEN="${INPUT_GITHUB_TOKEN}"
 
 paths=()
 while read -r pattern; do
-    [[ -n ${pattern} ]] && paths+=("\"${pattern}\"")
+    [[ -n ${pattern} ]] && paths+=("${pattern}")
 done <<< "${INPUT_PATH:-.}"
 
 names=()
 if [[ "${INPUT_PATTERN:-*}" != '*' ]]; then
     while read -r pattern; do
-        [[ -n ${pattern} ]] && names+=(-o -name "\"${pattern}\"")
+        [[ -n ${pattern} ]] && names+=(-o -name "${pattern}")
     done <<< "${INPUT_PATTERN}"
     (( ${#names[@]} )) && { names[0]='('; names+=(')'); }
 fi
 
 excludes=()
 while read -r pattern; do
-    [[ -n ${pattern} ]] && excludes+=(-not -path "\"${pattern}\"")
+    [[ -n ${pattern} ]] && excludes+=(-not -path "${pattern}")
 done <<< "${INPUT_EXCLUDE:-}"
 
 # Match all files matching the pattern
