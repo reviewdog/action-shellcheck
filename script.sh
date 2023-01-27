@@ -48,7 +48,7 @@ while read -r pattern; do
 done <<< "${INPUT_EXCLUDE:-}"
 
 # Match all files matching the pattern
-files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}")
+files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}" -print0 | xargs -0)
 
 # Match all files with a shebang (e.g. "#!/usr/bin/env zsh" or even "#!bash") in the first line of a file
 # Ignore files which match "$pattern" in order to avoid duplicates
