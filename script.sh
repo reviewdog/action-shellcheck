@@ -48,12 +48,12 @@ while read -r pattern; do
 done <<< "${INPUT_EXCLUDE:-}"
 
 # Match all files matching the pattern
-files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}")
+files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}" | awk -v d="|" '{s=(NR==1?s:s d)$0}END{print s}')
 
 # Match all files with a shebang (e.g. "#!/usr/bin/env zsh" or even "#!bash") in the first line of a file
 # Ignore files which match "$pattern" in order to avoid duplicates
 if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
-  files_with_shebang=$(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 | xargs -0 awk 'FNR==1 && /^#!.*sh/ { print FILENAME }')
+  files_with_shebang=$(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 | xargs -0 awk 'FNR==1 && /^#!.*sh/ { print FILENAME }' | awk -v d="|" '{s=(NR==1?s:s d)$0}END{print s}')
 fi
 
 # Exit early if no files have been found
@@ -62,7 +62,7 @@ if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang:-}" ]; then
   exit 0
 fi
 
-FILES="${files_with_pattern} ${files_with_shebang:-}"
+FILES=$(echo "${files_with_pattern} ${files_with_shebang:-}" | awk '{gsub(/\|/,"\n"); print $0;}')
 
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
