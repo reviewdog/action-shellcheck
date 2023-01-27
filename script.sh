@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -u
+set -ux
 
 echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck'
 TEMP_PATH="$(mktemp -d)"
