@@ -62,7 +62,7 @@ if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang:-}" ]; then
   exit 0
 fi
 
-FILES=$(echo "${files_with_pattern} ${files_with_shebang:-}" | awk '{gsub(/\|/,"\n"); print $0;}' | awk '{printf ""%s" ", $1}')
+FILES=$(echo "${files_with_pattern} ${files_with_shebang:-}" | awk '{gsub(/\|/,"\n"); print $0;}' | awk '{printf "%s",(NR==1?"":" ")"\042"$0"\042"}END{print ""}')
 
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
