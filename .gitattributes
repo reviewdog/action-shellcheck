@@ -1,3 +1,4 @@
 # Denote files that are shell scripts and should be normalized (convert crlf -> lf)
 # and should be converted to unix line endings on checkout.
 *.sh text eol=lf
+non-sh-test text eol=lf
