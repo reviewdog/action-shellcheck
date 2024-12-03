@@ -75,6 +75,7 @@ if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
         -name="shellcheck" \
         -reporter=github-pr-review \
         -filter-mode="${INPUT_FILTER_MODE}" \
+        -fail-level="${INPUT_FAIL_LEVEL}" \
         -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
         -level="${INPUT_LEVEL}" \
         ${INPUT_REVIEWDOG_FLAGS}
@@ -88,6 +89,7 @@ else
         -name="shellcheck" \
         -reporter="${INPUT_REPORTER:-github-pr-check}" \
         -filter-mode="${INPUT_FILTER_MODE}" \
+        -fail-level="${INPUT_FAIL_LEVEL}" \
         -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
         -level="${INPUT_LEVEL}" \
         ${INPUT_REVIEWDOG_FLAGS}
@@ -105,6 +107,7 @@ shellcheck -f diff ${FILES} \
       -f.diff.strip=1 \
       -reporter="github-pr-review" \
       -filter-mode="${INPUT_FILTER_MODE}" \
+      -fail-level="${INPUT_FAIL_LEVEL}" \
       -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
       ${INPUT_REVIEWDOG_FLAGS}
 EXIT_CODE_SUGGESTION=$?
