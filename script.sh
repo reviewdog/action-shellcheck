@@ -23,6 +23,7 @@ else
 fi
 
 PATH="${TEMP_PATH}/bin:$PATH"
+shellcheck --version
 echo '::endgroup::'
 
 cd "${GITHUB_WORKSPACE}" || exit
