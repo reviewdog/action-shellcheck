@@ -67,7 +67,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: reviewdog/action-setup@bddaa4f8db3717aad1ce0987da12e1cb4bd081c1 # v1.3.1
+    - uses: reviewdog/action-setup@e04ffabe3898a0af8d0fb1af00c188831c4b5893 # v1.3.2
       with:
         reviewdog_version: v0.20.3
     - run: $GITHUB_ACTION_PATH/script.sh
