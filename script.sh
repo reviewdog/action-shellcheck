@@ -8,13 +8,22 @@ cd "${TEMP_PATH}" || exit
 mkdir bin
 
 WINDOWS_TARGET=zip
-LINUX_TARGET=linux.x86_64.tar.xz
-MACOS_TARGET=darwin.x86_64.tar.xz
 
+# Get system architecture
+ARCH=$(uname -m)
+if [[ "${ARCH}" == "arm64" || "${ARCH}" == "aarch64" ]]; then
+  CPU_ARCH="aarch64"
+else
+  CPU_ARCH="x86_64"
+fi
+
+# Set targets based on OS and architecture
 if [[ $(uname -s) == "Linux" ]]; then
+  LINUX_TARGET="linux.${CPU_ARCH}.tar.xz"
   curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${LINUX_TARGET}" | tar -xJf -
   cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
 elif [[ $(uname -s) == "Darwin" ]]; then
+  MACOS_TARGET="darwin.${CPU_ARCH}.tar.xz"
   curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${MACOS_TARGET}" | tar -xJf -
   cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
 else
