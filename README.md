@@ -121,6 +121,20 @@ jobs:
           check_all_files_with_shebangs: "false" # Optional.
 ```
 
+## Permissions
+
+It is recommended to add explicit [`permissions`](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token)
+to the workflow file so the scope of the `GITHUB_TOKEN` passed to `action-shellcheck` is as narrow as
+possible. The required permissions for `action-shellcheck` to read the contents of a PR and post review
+comments to it, is:
+
+```yaml
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+```
+
 ## Known issue
 
 Running `shellcheck.exe` on Windows might fail with the following error:
