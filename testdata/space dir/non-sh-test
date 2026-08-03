@@ -1,0 +1,4 @@
+#!/usr/bin/env ksh
+# shellcheck enable=all
+
+echo "${1}"
