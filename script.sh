@@ -57,28 +57,34 @@ while read -r pattern; do
     [[ -n ${pattern} ]] && excludes+=(-not -path "${pattern}")
 done <<< "${INPUT_EXCLUDE:-}"
 
+# Collect matches NUL-separated so that paths containing whitespace survive
+files=()
+
 # Match all files matching the pattern
-files_with_pattern=$(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}")
+while IFS= read -r -d '' file; do
+    files+=("${file}")
+done < <(find "${paths[@]}" "${excludes[@]}" -type f "${names[@]}" -print0)
 
 # Match all files with a shebang (e.g. "#!/usr/bin/env zsh" or even "#!bash") in the first line of a file
 # Ignore files which match "$pattern" in order to avoid duplicates
 if [ "${INPUT_CHECK_ALL_FILES_WITH_SHEBANGS}" = "true" ]; then
-  files_with_shebang=$(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 | xargs -0 awk 'FNR==1 && /^#!.*sh/ { print FILENAME }')
+  while IFS= read -r -d '' file; do
+      files+=("${file}")
+  done < <(find "${paths[@]}" "${excludes[@]}" -not "${names[@]}" -type f -print0 \
+    | xargs -0 awk 'FNR==1 && /^#!.*sh/ { printf "%s%c", FILENAME, 0 }')
 fi
 
 # Exit early if no files have been found
-if [ -z "${files_with_pattern}" ] && [ -z "${files_with_shebang:-}" ]; then
+if [ ${#files[@]} -eq 0 ]; then
   echo "No matching files found to check."
   exit 0
 fi
-
-FILES="${files_with_pattern} ${files_with_shebang:-}"
 
 echo '::group:: Running shellcheck ...'
 if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
   # erroformat: https://git.io/JeGMU
   # shellcheck disable=SC2086
-  shellcheck -f json  ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} ${FILES} \
+  shellcheck -f json  ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} "${files[@]}" \
     | jq -r '.[] | "\(.file):\(.line):\(.column):\(.level):\(.message) [SC\(.code)](https://github.com/koalaman/shellcheck/wiki/SC\(.code))"' \
     | reviewdog \
         -efm="%f:%l:%c:%t%*[^:]:%m" \
@@ -93,7 +99,7 @@ if [ "${INPUT_REPORTER}" = 'github-pr-review' ]; then
 else
   # github-pr-check,github-check (GitHub Check API) doesn't support markdown annotation.
   # shellcheck disable=SC2086
-  shellcheck -f checkstyle ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} ${FILES} \
+  shellcheck -f checkstyle ${INPUT_SHELLCHECK_FLAGS:-'--external-sources'} "${files[@]}" \
     | reviewdog \
         -f="checkstyle" \
         -name="shellcheck" \
@@ -110,7 +116,7 @@ echo '::endgroup::'
 echo '::group:: Running shellcheck (suggestion) ...'
 # -reporter must be github-pr-review for the suggestion feature.
 # shellcheck disable=SC2086
-shellcheck -f diff ${FILES} \
+shellcheck -f diff "${files[@]}" \
   | reviewdog \
       -name="shellcheck (suggestion)" \
       -f=diff \
