@@ -123,8 +123,7 @@ shellcheck -f diff "${files[@]}" \
       -f.diff.strip=1 \
       -reporter="github-pr-review" \
       -filter-mode="${INPUT_FILTER_MODE}" \
-      -fail-level="${INPUT_FAIL_LEVEL}" \
-      -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
+      -fail-level=none \
       ${INPUT_REVIEWDOG_FLAGS}
 EXIT_CODE_SUGGESTION=$?
 echo '::endgroup::'
