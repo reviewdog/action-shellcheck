@@ -3,9 +3,9 @@
 set -u
 
 echo '::group:: Installing shellcheck ... https://github.com/koalaman/shellcheck'
-TEMP_PATH="$(mktemp -d)"
+TEMP_PATH="$(mktemp -d)" || exit
 cd "${TEMP_PATH}" || exit
-mkdir bin
+mkdir bin || exit
 
 WINDOWS_TARGET=zip
 
@@ -20,19 +20,21 @@ fi
 # Set targets based on OS and architecture
 if [[ $(uname -s) == "Linux" ]]; then
   LINUX_TARGET="linux.${CPU_ARCH}.tar.xz"
-  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${LINUX_TARGET}" | tar -xJf -
-  cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+  curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${LINUX_TARGET}" -o shellcheck.tar.xz || exit
+  tar -xJf shellcheck.tar.xz || exit
+  cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin || exit
 elif [[ $(uname -s) == "Darwin" ]]; then
   MACOS_TARGET="darwin.${CPU_ARCH}.tar.xz"
-  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${MACOS_TARGET}" | tar -xJf -
-  cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin
+  curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${MACOS_TARGET}" -o shellcheck.tar.xz || exit
+  tar -xJf shellcheck.tar.xz || exit
+  cp "shellcheck-v$SHELLCHECK_VERSION/shellcheck" ./bin || exit
 else
-  curl -sL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" -o "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && unzip "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && rm "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}"
-  cp "shellcheck.exe" ./bin
+  curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" -o "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && unzip "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" && rm "shellcheck-v${SHELLCHECK_VERSION}.${WINDOWS_TARGET}" || exit
+  cp "shellcheck.exe" ./bin || exit
 fi
 
 PATH="${TEMP_PATH}/bin:$PATH"
-shellcheck --version
+shellcheck --version || exit
 echo '::endgroup::'
 
 cd "${GITHUB_WORKSPACE}" || exit
