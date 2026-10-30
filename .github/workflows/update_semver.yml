@@ -9,7 +9,7 @@ jobs:
   update-semver:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: haya14busa/action-update-semver@7d2c558640ea49e798d46539536190aff8c18715 # v1.5.1
+      - uses: actions/checkout@v7.0.1
+      - uses: haya14busa/action-update-semver@v1.5.1
         with:
           github_token: ${{ secrets.github_token }}
