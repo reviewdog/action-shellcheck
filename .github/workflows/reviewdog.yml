@@ -8,13 +8,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
       - name: shellcheck-github-pr-check
-        uses: ./
+        uses: $/
         with:
           github_token: ${{ secrets.github_token }}
       - name: shellcheck-github-check
-        uses: ./
+        uses: $/
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
@@ -25,7 +25,7 @@ jobs:
           exclude: './testdata/*'
           shellcheck_flags: '--external-sources --severity=style'
       - name: shellcheck-github-pr-review
-        uses: ./
+        uses: $/
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
@@ -33,7 +33,7 @@ jobs:
           path: '.'
           exclude: './testdata/*'
       - name: shellcheck-shebang-check
-        uses: ./
+        uses: $/
         with:
           github_token: ${{ secrets.github_token }}
           filter_mode: nofilter
